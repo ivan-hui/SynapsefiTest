@@ -72,13 +72,12 @@ class App extends React.Component {
       .then(info => {
         let that = this;
         console.log(info);
-        that.setState({ info: info.data.body });
+        this.get();
       })
       .catch(err =>
         console.log('Error from Submit button', err)
       );
       
-      get();
   }
   
 
