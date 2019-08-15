@@ -22,6 +22,7 @@ Look at the app through
 ### Step 1
 Since this is a not an offical app, there is no log in, just enter your information if you are an new customer. If you are a returning customer, skip this step
 
+Please wait at least 20 seconds.
 
 ### Step 2 
 Click on your name.
