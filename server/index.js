@@ -33,7 +33,8 @@ app.post('/getuser', (req, res) => {
     const userID = req.body.userID;
     const fullDehydrate = true;
     console.log(userID, 'user ID')
-    client.getUser(userID, fullDehydrate)
+    client
+      .getUser(userID, fullDehydrate)
       .then(response => {
         console.log("GETONE SUCCESS", response)
         res.json(response);
@@ -113,6 +114,86 @@ app.post('/newuser', (req, res) => {
 
 )
 
+
+//create bank account
+
+app.post('/createbank', (req, res) => {
+  client
+    .getUser(req.body._id)
+      .then((user) => {
+        user
+          .createNode({
+            type: 'DEPOSIT-US',
+            info: {
+              nickname: 'Test Checking',
+              balance: {
+                amount: 100000
+              }
+            }
+          })
+          .then(({ data }) => {
+            res.send(data);
+          })
+          .catch(err => console.log("CREATEBANK ERROR", err));
+      })
+      .catch((err) => {
+        console.log('getUser Error', err)
+      }) 
+})
+
+
+//find all bank accounts 
+
+app.post('/getBankAccounts', (req, res) => {
+  client
+    .getUser(req.body._id)
+    .then((user) => {
+      user
+        .getAllUserNodes()
+        .then(({ data }) => {
+          res.send(data);
+        })
+        .catch(err => {
+          console.log('error from get bank accounts', err)
+        })
+    })
+    .catch(err => {
+      console.log('error from getbank account getNode', err)
+    })
+})
+
+//transfer amount 
+app.post('/transferFunds', (req, res) => {
+  console.log(req.body)
+  client
+    .getUser(req.body.userID)
+      .then((user) => {
+        user
+          .createTransaction(req.body.fromID, {
+            to: {
+              type: 'ACH-US',
+              id: req.body.toID
+            },
+            amount: {
+              amount: req.body.amount,
+              currency: 'USD'
+            },
+            extra: {
+              ip: '127.0.0.1',
+              note: 'Test transaction'
+            }
+          })
+          .then(({ data }) => {
+            res.send(data);
+          })
+          .catch((err) => {
+            console.log('error from transfer funds', err)
+          })
+      })
+      .catch((err) => {
+        console.log('err from getuser transfer funds', err)
+      })
+})
 
 
 let port = process.env.port || 8000;
